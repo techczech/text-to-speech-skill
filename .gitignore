@@ -1,0 +1,15 @@
+# Python
+venv/
+__pycache__/
+*.py[cod]
+
+# Generated audio
+output/
+*.wav
+*.mp3
+
+# OS
+.DS_Store
+
+# HuggingFace cache
+.cache/
