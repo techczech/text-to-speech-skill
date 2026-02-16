@@ -29,6 +29,8 @@ pip install mlx-audio
 
 Also ensure ffmpeg is installed for MP3 conversion: `brew install ffmpeg`
 
+Models are stored in `~/local-models` (set via `HF_HUB_CACHE` in `.zshrc`, symlinked from `~/.cache/huggingface/hub`). This is shared with the speech-to-text skill and all other HuggingFace-based tools.
+
 A reference setup with a working podcast generator lives at `~/gitrepos/x-experiments/podcast-test/`.
 
 ## Workflow
