@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["mlx-audio>=0.3", "soundfile", "numpy"]
+#
+# [tool.uv]
+# prerelease = "allow"
+# ///
 """
 Voice Cloning Comparison: Chatterbox Turbo vs Qwen3-TTS Base.
 Demonstrates voice cloning with both engines for side-by-side comparison.
 
-Requires:
-  - pip install mlx-audio (v0.3+)
-  - A reference audio file (WAV, 5+ seconds of clean speech)
-
-Usage:
-  python voice_clone_demo.py reference_voice.wav
-  python voice_clone_demo.py reference_voice.wav "Transcript of the reference audio."
+Run with: uv run --python 3.12 scripts/voice_clone_demo.py reference_voice.wav
+  or:     uv run --python 3.12 scripts/voice_clone_demo.py reference_voice.wav "Transcript of the reference audio."
 """
 
 import sys
@@ -20,8 +22,8 @@ import numpy as np
 import soundfile as sf
 from mlx_audio.tts.utils import load_model
 
-OUTPUT_DIR = Path(__file__).parent / "output"
-OUTPUT_DIR.mkdir(exist_ok=True)
+OUTPUT_DIR = Path(__file__).parent.parent / "assets" / "output"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Text to generate in the cloned voice
 CLONE_TEXT = (

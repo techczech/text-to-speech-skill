@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["mlx-audio>=0.3", "soundfile", "numpy"]
+#
+# [tool.uv]
+# prerelease = "allow"
+# ///
 """
 Chatterbox Turbo TTS demo using mlx-audio.
 Demonstrates basic generation, voice cloning, and streaming on Apple Silicon.
 
-Requires: pip install mlx-audio (v0.3+)
+Run with: uv run --python 3.12 scripts/generate_chatterbox.py
 Model: mlx-community/chatterbox-turbo-fp16 (~3GB, downloads on first run)
 """
 
@@ -18,8 +25,8 @@ from mlx_audio.tts.utils import load_model
 
 # Configuration
 MODEL_ID = "mlx-community/chatterbox-turbo-fp16"
-OUTPUT_DIR = Path(__file__).parent / "output"
-OUTPUT_DIR.mkdir(exist_ok=True)
+OUTPUT_DIR = Path(__file__).parent.parent / "assets" / "output"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def generate_basic():
