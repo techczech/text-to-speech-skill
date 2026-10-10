@@ -2,6 +2,14 @@
 
 Cross-engine voice cloning comparison and best practices.
 
+## Voice Cloning and Consent
+
+- Clone only voices you have permission to use: your own, or a speaker who has clearly agreed. Recordings you merely have access to (broadcasts, podcasts, calls, family archives) are not permission.
+- Do not impersonate real people, and do not use a cloned voice to deceive anyone (fake endorsements, fraud, fake calls or messages, misleading audio of a real person).
+- Label synthetic audio as synthetic wherever it is shared or published, for example in the title, description or a spoken disclosure.
+- Keep reference recordings private and out of version control; this skill's `.gitignore` excludes `assets/` and common audio files.
+- If a user asks for a clone of someone else's voice and no consent is evident, ask before proceeding; if consent is absent, decline and suggest Qwen3-TTS VoiceDesign (a synthetic voice from a text description) instead.
+
 ## Which Engine to Use
 
 | Scenario | Engine | What You Need |

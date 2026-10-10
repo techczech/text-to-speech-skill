@@ -1,6 +1,6 @@
 ---
 name: text-to-speech
-description: "Generate speech audio locally."
+description: "Generate speech, narration, podcasts, dialogue or music locally on Apple Silicon (Qwen3-TTS, Chatterbox, Dia, ACE-Step) with optional voice cloning from audio you are authorised to use. Use when text should become audio without cloud APIs."
 ---
 
 # Text-to-Speech & Music Generation (Local Audio on Apple Silicon)
@@ -12,11 +12,11 @@ Generate high-quality speech and music locally on Apple Silicon. No cloud APIs r
 Scripts use `uv run` with inline dependencies (PEP 723) — no venv needed.
 Ensure `uv` and `ffmpeg` are installed: `which uv && which ffmpeg`
 If ffmpeg is missing: `brew install ffmpeg`
-Models cache in `~/local-models` (via `HF_HUB_CACHE` in `.zshrc`).
+Models cache in the standard Hugging Face cache (`$HF_HUB_CACHE`, else `$HF_HOME/hub`, else `~/.cache/huggingface/hub`). Set `HF_HOME` to keep them on another volume.
 
 **Pre-flight** — check cached models before generating (avoids multi-GB downloads):
 ```bash
-ls ~/local-models/ | grep -iE "(Qwen3-TTS|chatterbox|Dia-|Kokoro|csm)"
+ls "${HF_HUB_CACHE:-${HF_HOME:-$HOME/.cache/huggingface}/hub}" | grep -iE "(Qwen3-TTS|chatterbox|Dia-|Kokoro|csm|Breeze)"
 ```
 Prefer a model already cached. Do NOT create local venvs or pip install into global Python.
 
@@ -77,8 +77,8 @@ Track `cursor_ms` during generation (cumulative sample count / sample_rate * 100
 | **Qwen3-TTS** | `Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16` | **Default.** Podcasts, narration, emotion control, voice design | ~2-3x RT | Yes (Base) | 10 | 24kHz |
 | **Chatterbox Turbo** | `chatterbox-turbo-fp16` | Easiest voice cloning, streaming | ~2x RT | Yes (ref_audio) | 14+ | 24kHz |
 | **Dia** | `Dia-1.6B-fp16` | Multi-speaker dialogue, nonverbal sounds | ~1-2x RT | Yes | English | 44.1kHz |
-| **Czech TTS** | `~/x-experiments/chatterbox/` | Czech speech with voice cloning (PyTorch, CPU) | ~0.1x RT | Yes | Czech | 24kHz |
-| **ACE-Step 1.5** | `~/x-experiments/ace-step/` | Music generation from text + lyrics (MLX) | ~3x RT | N/A | 50+ | — |
+| **Czech TTS** | `resemble-ai/chatterbox` checkout (see `references/czech-tts.md`) | Czech speech with voice cloning (PyTorch, CPU) | ~0.1x RT | Yes | Czech | 24kHz |
+| **ACE-Step 1.5** | `ACE-Step/Ace-Step1.5` checkout (see `references/ace-step.md`) | Music generation from text + lyrics (MLX) | ~3x RT | N/A | 50+ | — |
 
 All `mlx-community/` model IDs above are prefixed with `mlx-community/` when loading.
 
@@ -88,6 +88,17 @@ All `mlx-community/` model IDs above are prefixed with `mlx-community/` when loa
 - **Dia** — Two-speaker conversations with `[S1]`/`[S2]` tags and nonverbal sounds like `(laughs)`
 - **Czech TTS** — Czech language speech synthesis with voice cloning
 - **ACE-Step** — Songs and instrumental music from text descriptions and lyrics
+
+## Breeze TTS 2 (optional, Apple Silicon)
+
+- Model: `mlx-community/Breeze-TTS-2-mlx-4bit` (~3 GB); unofficial MLX conversion. English/Chinese, voice design and cloning. Qwen remains the default.
+- Download: `hf download mlx-community/Breeze-TTS-2-mlx-4bit`. Re-run to resume; retain the returned snapshot path/revision. Check completion before claiming cached.
+- Runtime: `Blaizzy/mlx-audio-swift`, `MLXAudioTTS`; not established by the Python `mlx_audio.tts.generate` examples in this skill. Python PEP 723 rules do not apply to Swift code.
+- Read [Breeze's Swift loading/generation example](https://github.com/Blaizzy/mlx-audio-swift/blob/main/Sources/MLXAudioTTS/Models/BreezeTTS/README.md) before generation. `TTS.loadModel(modelRepo:)` loads the model; `voice` supplies the voice-design instruction. Include the desired language in that instruction; the generic `language` field does not alter Breeze prompt assembly.
+- Cloning: use authorised reference audio and its exact transcript (`refAudio`, `refText`). Output: mono 24 kHz. Swift streaming currently delivers the waveform as one audio event, not incremental playable chunks.
+- Cache: Hub snapshot download does not prove Swift will reuse that cache. Resolve the runtime's local-model/cache support before generation; avoid a second automatic download.
+- Verification: distinguish weights downloaded, runtime installed, and speech generated. Require a decodable WAV and listening/transcription check before calling synthesis working. Do not promise Mac speed from CUDA benchmarks.
+- Licence: [Breeze model terms](https://huggingface.co/BreezeBlue/Breeze-TTS-2) restrict weights, derivatives and self-hosted outputs to research/non-commercial use; source-code licensing does not remove that restriction. Do not select for commercial output without suitable rights.
 
 ## Qwen3-TTS
 
@@ -135,7 +146,9 @@ See `scripts/generate_dia.py` for a complete multi-speaker dialogue example.
 
 ## Voice Cloning
 
-Three engines support voice cloning: Chatterbox Turbo (easiest, no transcript), Qwen3-TTS Base (best quality, needs transcript), Dia (cloned voice in dialogue). Qwen3-TTS VoiceDesign creates voices from text descriptions without audio.
+**Consent first:** clone only voices you have permission to use (your own, or with the speaker's clear consent). Do not impersonate real people or use cloned voices to deceive, and label synthetic audio as synthetic. See `references/voice-cloning.md`.
+
+The Python routes support voice cloning through Chatterbox Turbo (no transcript), Qwen3-TTS Base (needs transcript), and Dia (cloned voice in dialogue). Breeze's optional Swift route also supports cloning with an exact transcript; see its section above. Qwen3-TTS VoiceDesign creates voices from text descriptions without audio.
 
 See `references/voice-cloning.md` for cross-engine comparison and requirements.
 

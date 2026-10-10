@@ -6,7 +6,13 @@
 # [tool.uv]
 # prerelease = "allow"
 # ///
-"""Quick voice cloning test with Chatterbox Turbo and Qwen3-TTS."""
+"""Quick voice cloning test with Chatterbox Turbo and Qwen3-TTS.
+
+Usage: uv run scripts/clone_test.py path/to/your_reference.wav [--ref-text "exact transcript"]
+
+Only use reference audio of a voice you have permission to clone.
+"""
+import argparse
 import time
 from pathlib import Path
 
@@ -14,7 +20,13 @@ import numpy as np
 import soundfile as sf
 from mlx_audio.tts.utils import load_model
 
-REF_AUDIO = str(Path(__file__).parent.parent / "assets" / "dominik-speech-sample-for-cloning.mp3")
+parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument("ref_audio", help="path to reference audio (5-15 s, one speaker) you are authorised to clone")
+parser.add_argument("--ref-text", default="", help="exact transcript of the reference audio (improves Qwen3-TTS quality)")
+args = parser.parse_args()
+REF_AUDIO = str(Path(args.ref_audio).expanduser())
+if not Path(REF_AUDIO).is_file():
+    parser.error(f"reference audio not found: {REF_AUDIO}")
 OUTPUT_DIR = Path(__file__).parent.parent / "assets" / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -56,13 +68,12 @@ t0 = time.time()
 model2 = load_model("mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16")
 print(f"Model loaded in {time.time() - t0:.1f}s")
 
-# We don't have the exact transcript, so we'll let it work without one
-# For best results, provide the exact transcript of the reference audio
+# For best results, pass --ref-text with the exact transcript of the reference audio
 t0 = time.time()
 results2 = list(model2.generate(
     text=TEXT,
     ref_audio=REF_AUDIO,
-    ref_text="",  # Empty — ideally provide exact transcript for best quality
+    ref_text=args.ref_text,
 ))
 gen_time2 = time.time() - t0
 

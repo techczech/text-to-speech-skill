@@ -8,10 +8,10 @@ When the user wants to generate songs, instrumental music, or audio from text de
 
 ## Setup
 
-The project lives at `~/gitrepos/x-experiments/ace-step/`.
+Clone the ACE-Step 1.5 project (`ACE-Step/Ace-Step1.5` on GitHub) anywhere you like; below, `<ace-step-dir>` means that checkout.
 
 ```bash
-cd ~/gitrepos/x-experiments/ace-step
+cd <ace-step-dir>
 uv sync  # installs dependencies
 # Models download on first run to checkpoints/ (~10GB total)
 ```
@@ -41,8 +41,8 @@ save_dir = "output"
 ```
 
 ```bash
-cd ~/gitrepos/x-experiments/ace-step
-HF_HUB_CACHE=~/local-models uv run python cli.py -c song.toml
+cd <ace-step-dir>
+uv run python cli.py -c song.toml
 ```
 
 Output appears in `output/` as `{uuid}.mp3`.
@@ -101,7 +101,7 @@ For instrumental tracks, set `instrumental = true` or use `lyrics = "[Instrument
 
 On M4 Max: **~11 seconds** for a 30-second song (8 inference steps, turbo model). DiT diffusion runs at ~7-8 it/s. Roughly **3x real-time** generation speed.
 
-Models stored in `~/gitrepos/x-experiments/ace-step/checkpoints/` (~10GB total):
+Models stored in `<ace-step-dir>/checkpoints/` (~10GB total):
 - `acestep-v15-turbo/` — DiT diffusion model (4.8GB)
 - `acestep-5Hz-lm-1.7B/` — LM for chain-of-thought (3.7GB, used when `thinking=true`)
 - `Qwen3-Embedding-0.6B/` — Text encoder (1.1GB)

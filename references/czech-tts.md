@@ -8,10 +8,10 @@ When the user needs Czech language speech synthesis with voice cloning.
 
 ## Setup
 
-The project lives at `~/gitrepos/x-experiments/chatterbox/` (cloned from `resemble-ai/chatterbox`).
+Clone `resemble-ai/chatterbox` anywhere you like; below, `<chatterbox-dir>` means that checkout.
 
 ```bash
-cd ~/gitrepos/x-experiments/chatterbox
+cd <chatterbox-dir>
 uv sync  # installs PyTorch + dependencies
 # Czech weights download automatically on first use via HF cache
 huggingface-cli download Thomcles/Chatterbox-TTS-Czech
@@ -28,15 +28,15 @@ import sys, os
 from pathlib import Path
 from safetensors.torch import load_file as load_safetensors
 
-os.environ["HF_HUB_CACHE"] = os.path.expanduser("~/local-models")
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+sys.path.insert(0, "<chatterbox-dir>/src")  # path to your chatterbox checkout
 from chatterbox.mtl_tts import ChatterboxMultilingualTTS
 
 model = ChatterboxMultilingualTTS.from_pretrained(device="cpu")
 
 # Swap T3 weights for Czech fine-tune
-czech_dir = os.path.expanduser("~/local-models/models--Thomcles--Chatterbox-TTS-Czech/snapshots/")
-czech_t3_path = next(Path(czech_dir).iterdir()) / "t3_cs.safetensors"
+from huggingface_hub import snapshot_download
+czech_dir = snapshot_download("Thomcles/Chatterbox-TTS-Czech")  # uses your HF cache
+czech_t3_path = Path(czech_dir) / "t3_cs.safetensors"
 t3_state = load_safetensors(str(czech_t3_path))
 model.t3.load_state_dict(t3_state)
 model.t3.to("cpu").eval()
@@ -60,7 +60,6 @@ subprocess.run(["ffmpeg", "-y", "-i", "output.wav", "-b:a", "192k", "output.mp3"
 - Runs on **CPU only** (PyTorch, not MLX) — generation takes ~1-2 minutes per sentence
 - Voice cloning via `audio_prompt_path` — use a clean 5-15 second reference clip
 - The Czech fine-tune modifies only the T3 (text-to-token) component; S3Gen vocoder is shared
-- Reference script: `~/gitrepos/x-experiments/chatterbox/test_czech.py`
 - Quality is reasonable but not as polished as the English Chatterbox models
 
 ## Troubleshooting

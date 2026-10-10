@@ -1,15 +1,28 @@
 # Python
 venv/
+.venv/
 __pycache__/
 *.py[cod]
 
-# Generated audio
+# Generated audio, reference recordings and local assets
+assets/
 output/
 *.wav
 *.mp3
+*.aiff
+*.m4a
+*.flac
+*.ogg
+
+# Agent/editor session state (local only)
+.claude/
+.remember/
 
 # OS
 .DS_Store
 
 # HuggingFace cache
 .cache/
+
+# Stale packaged archive with old paths; rebuild before publishing if needed
+*.skill

@@ -46,7 +46,7 @@ Verify: `which uv && which ffmpeg`
 Before generating, check what's already cached (avoids multi-GB downloads):
 
 ```bash
-ls ~/local-models/ | grep -iE "(Qwen3-TTS|chatterbox|Dia-|Kokoro|csm)"
+ls "${HF_HUB_CACHE:-${HF_HOME:-$HOME/.cache/huggingface}/hub}" | grep -iE "(Qwen3-TTS|chatterbox|Dia-|Kokoro|csm)"
 ```
 
 Prefer a model that's already cached. The default is `Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16`.
@@ -136,13 +136,14 @@ All pipelines output WAV → ffmpeg → MP3/other formats.
 
 Models are cached by HuggingFace Hub at:
 ```
-~/local-models/  (if HF_HUB_CACHE is set)
+$HF_HUB_CACHE  (if set)
+$HF_HOME/hub  (if HF_HOME is set)
 ~/.cache/huggingface/hub/  (default)
 ```
 
 To list cached TTS models:
 ```bash
-ls ~/local-models/ | grep -E "(Qwen3-TTS|chatterbox|Dia)"
+ls "${HF_HUB_CACHE:-${HF_HOME:-$HOME/.cache/huggingface}/hub}" | grep -E "(Qwen3-TTS|chatterbox|Dia)"
 ```
 
 ## CLI Usage (mlx-audio)
@@ -198,7 +199,7 @@ Anaconda environments pin `numpy <2` and old `pandas`/`sklearn` that conflict wi
 ### Model download hangs or is very slow
 ```bash
 huggingface-cli login
-# Or: export HF_TOKEN=hf_your_token_here
+# Or: export HF_TOKEN=<your-hugging-face-token>
 ```
 
 ### Out of memory
