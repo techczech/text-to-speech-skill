@@ -1,6 +1,6 @@
 # Paper Reading Modes
 
-When a user provides a paper (markdown, PDF, or Zotero key) and asks for TTS, use one of two paper-specific modes. These integrate with the `academic-paper-review` skill's paper-analysis structure.
+When a user provides a paper (markdown, PDF, or Zotero key) and asks for TTS, use one of two paper-specific modes. These integrate with the `paper-reviewer-skill` paper folders.
 
 **Default model**: `mlx-community/Qwen3-TTS-12Hz-0.6B-CustomVoice-bf16` with `Ryan` speaker. Use 1.7B only if user requests higher quality.
 

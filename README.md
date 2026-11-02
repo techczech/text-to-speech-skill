@@ -1,6 +1,6 @@
 # text-to-speech
 
-A Claude Code skill that turns text into speech, narration, podcasts, two-speaker dialogue or music **locally** on Apple Silicon, with no cloud API. It covers Qwen3-TTS (default, 10 languages, emotion control), Chatterbox Turbo (streaming, easy voice cloning), Dia (English dialogue), Czech speech via Chatterbox Multilingual, and ACE-Step 1.5 for songs. It is for anyone who wants private, offline audio generation driven from Claude Code.
+A skill that turns text into speech, narration, podcasts, two-speaker dialogue or music **locally** on Apple Silicon, with no cloud inference API. It covers Qwen3-TTS (default, 10 languages, emotion control), optional Breeze TTS 2 (English/Chinese voice design through Swift), Chatterbox Turbo, Dia, Czech speech via Chatterbox Multilingual, and ACE-Step 1.5 for songs.
 
 ## Requirements
 
@@ -17,7 +17,11 @@ A Claude Code skill that turns text into speech, narration, podcasts, two-speake
 git clone https://github.com/techczech/text-to-speech-skill ~/.claude/skills/text-to-speech
 ```
 
-There is nothing else to install: the first run of a script fetches Python dependencies through `uv` and the model from Hugging Face. Try it:
+Install only one copy under the name `text-to-speech`. If a maintained copy is already linked into the agent's skill directory, do not also install a `text-to-speech-skill` clone there.
+
+For the Python engines, the first run fetches dependencies through `uv` and the model from Hugging Face. Breeze has a separate Swift runtime; see the [working setup and cache workaround](references/setup-breeze-tts.md) and [three auditioned narration presets](references/voice-presets-breeze-tts.md). Fresh Breeze builds need full Xcode and its Metal compiler; an existing verified runtime can be reused.
+
+Try the default Python engine:
 
 ```bash
 uv run --python 3.12 --with "mlx-audio>=0.3" --prerelease=allow \

@@ -1,6 +1,6 @@
 ---
 name: text-to-speech
-description: "Generate speech, narration, podcasts, dialogue or music locally on Apple Silicon (Qwen3-TTS, Chatterbox, Dia, ACE-Step) with optional voice cloning from audio you are authorised to use. Use when text should become audio without cloud APIs."
+description: "Use when text should become audio locally on Apple Silicon: narration, podcasts, dialogue, music, voice cloning from audio you are authorised to use."
 ---
 
 # Text-to-Speech & Music Generation (Local Audio on Apple Silicon)
@@ -92,11 +92,10 @@ All `mlx-community/` model IDs above are prefixed with `mlx-community/` when loa
 ## Breeze TTS 2 (optional, Apple Silicon)
 
 - Model: `mlx-community/Breeze-TTS-2-mlx-4bit` (~3 GB); unofficial MLX conversion. English/Chinese, voice design and cloning. Qwen remains the default.
-- Download: `hf download mlx-community/Breeze-TTS-2-mlx-4bit`. Re-run to resume; retain the returned snapshot path/revision. Check completion before claiming cached.
-- Runtime: `Blaizzy/mlx-audio-swift`, `MLXAudioTTS`; not established by the Python `mlx_audio.tts.generate` examples in this skill. Python PEP 723 rules do not apply to Swift code.
-- Read [Breeze's Swift loading/generation example](https://github.com/Blaizzy/mlx-audio-swift/blob/main/Sources/MLXAudioTTS/Models/BreezeTTS/README.md) before generation. `TTS.loadModel(modelRepo:)` loads the model; `voice` supplies the voice-design instruction. Include the desired language in that instruction; the generic `language` field does not alter Breeze prompt assembly.
+- Read [working setup and cache repair](references/setup-breeze-tts.md) before running Breeze. Reuse the installed Swift executable and cached weights; build/download only when missing and within scope. This is not the Python `mlx_audio.tts.generate` route; Python PEP 723 rules do not apply.
+- For narration voices, read [auditioned voice presets](references/voice-presets-breeze-tts.md). Pass the full description to `--voice`, not the preset name. Include the language in that description; the generic language field does not alter Breeze prompt assembly.
 - Cloning: use authorised reference audio and its exact transcript (`refAudio`, `refText`). Output: mono 24 kHz. Swift streaming currently delivers the waveform as one audio event, not incremental playable chunks.
-- Cache: Hub snapshot download does not prove Swift will reuse that cache. Resolve the runtime's local-model/cache support before generation; avoid a second automatic download.
+- Cache: the tested Swift runtime rejected a linked HF snapshot. Use the documented resolved-file copy-on-write layout; preserve original blobs. `HF_HUB_OFFLINE=1` did not prevent a download attempt. Require a cached-model log before treating a run as cache-only.
 - Verification: distinguish weights downloaded, runtime installed, and speech generated. Require a decodable WAV and listening/transcription check before calling synthesis working. Do not promise Mac speed from CUDA benchmarks.
 - Licence: [Breeze model terms](https://huggingface.co/BreezeBlue/Breeze-TTS-2) restrict weights, derivatives and self-hosted outputs to research/non-commercial use; source-code licensing does not remove that restriction. Do not select for commercial output without suitable rights.
 
